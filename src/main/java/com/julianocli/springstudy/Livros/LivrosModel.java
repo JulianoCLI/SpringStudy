@@ -4,10 +4,10 @@ import com.julianocli.springstudy.User.UserModel;
 import jakarta.persistence.*;
 import lombok.*;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tb_livros")
 public class LivrosModel {
@@ -16,7 +16,7 @@ public class LivrosModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Include
-    private long id;
+    private Long id;
     private String titulo;
 
     @ManyToOne // Muitos livros podem ter apenas uma pessoa
@@ -24,8 +24,7 @@ public class LivrosModel {
     private UserModel user;
 
 
-    public LivrosModel(long id, String titulo) {
-        this.id = id;
+    public LivrosModel(String titulo) {
         this.titulo = titulo;
     }
 
