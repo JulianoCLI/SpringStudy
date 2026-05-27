@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Interativo - API de Livraria Executiva</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0c0817;
+            --card-bg: rgba(20, 16, 38, 0.6);
+            --border-color: rgba(255, 255, 255, 0.07);
+            --text-primary: #f3f1f6;
+            --text-secondary: #a39eb9;
+            --accent-cyan: #00f2fe;
+            --accent-purple: #9b51e0;
+            --accent-green: #00ff87;
+            --accent-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --purple-gradient: linear-gradient(135deg, #9b51e0 0%, #7026b9 100%);
+            --green-gradient: linear-gradient(135deg, #13f1fc 0%, #00ff87 100%);
+            --shadow-glow: 0 8px 32px 0 rgba(0, 242, 254, 0.15);
+            --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(155, 81, 224, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #d3cce3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            line-height: 1.6;
+        }
+
+        /* PROGRESS SECTION */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px 25px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-text {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-cyan);
+            min-width: 80px;
+            text-align: left;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        .progress-bar-container {
+            flex-grow: 1;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-gradient);
+            border-radius: 6px;
+            box-shadow: 0 0 15px var(--accent-cyan);
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 81, 81, 0.3);
+            color: #ff5252;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 81, 81, 0.15);
+            border-color: #ff5252;
+            box-shadow: 0 0 10px rgba(255, 82, 82, 0.2);
+        }
+
+        /* PHASES CARD */
+        .phase-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .phase-header {
+            padding: 22px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.01);
+            user-select: none;
+        }
+
+        .phase-header:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .phase-title-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .phase-badge {
+            background: rgba(155, 81, 224, 0.15);
+            color: #d8b4fe;
+            border: 1px solid rgba(155, 81, 224, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .phase-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .phase-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .phase-count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .chevron {
+            fill: none;
+            stroke: var(--text-secondary);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transform: rotate(0deg);
+        }
+
+        .phase-card.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+
+        .phase-content {
+            padding: 0px 30px 25px 30px;
+            display: block;
+        }
+
+        .phase-card.collapsed .phase-content {
+            display: none;
+        }
+
+        /* CHECKBOXES LIST */
+        .task-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 242, 254, 0.2);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.03);
+        }
+
+        .task-item.completed {
+            background: rgba(0, 255, 135, 0.02);
+            border-color: rgba(0, 255, 135, 0.15);
+        }
+
+        .task-item.completed:hover {
+            border-color: rgba(0, 255, 135, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 135, 0.03);
+        }
+
+        /* CUSTOM CHECKBOX */
+        .checkbox-container {
+            display: block;
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 0;
+            cursor: pointer;
+            user-select: none;
+            font-size: 1rem;
+            min-height: 20px;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+        }
+
+        .task-item:hover .checkmark {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background: var(--green-gradient);
+            border-color: transparent;
+            box-shadow: 0 0 10px rgba(0, 255, 135, 0.4);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid #0c0817;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
+
+        .task-desc {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .task-item.completed .task-desc {
+            color: var(--text-secondary);
+            text-decoration: line-through rgba(163, 158, 185, 0.4);
+        }
+
+        .task-code {
+            display: inline-block;
+            font-family: 'Courier New', Courier, monospace;
+            background: rgba(255, 255, 255, 0.07);
+            color: #e5c7ff;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .task-item.completed .task-code {
+            color: rgba(229, 199, 255, 0.4);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* CONGRATS OVERLAY */
+        #celebration-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(12, 8, 23, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(25px);
+        }
+
+        .congrats-card {
+            background: var(--card-bg);
+            border: 2px solid var(--accent-cyan);
+            border-radius: var(--radius-lg);
+            padding: 40px 60px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 242, 254, 0.3);
+            max-width: 500px;
+            position: relative;
+            transform: scale(0.8);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .congrats-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .congrats-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .congrats-text {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .congrats-btn {
+            background: var(--green-gradient);
+            color: #0c0817;
+            border: none;
+            padding: 12px 30px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 135, 0.4);
+        }
+
+        .congrats-btn:hover {
+            box-shadow: 0 0 25px rgba(0, 255, 135, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* CONFETTI CANVAS */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container">
+        <header>
+            <h1>Checklist de Estudos & Implementação</h1>
+            <p>Monitore e marque a sua evolução passo a passo durante a finalização do projeto do Sistema de Biblioteca Executiva (Spring Boot + JPA).</p>
+            
+            <div class="progress-section">
+                <div class="progress-text" id="progress-percentage">0%</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="overall-progress-bar"></div>
+                </div>
+                <button class="clear-btn" onclick="resetAllProgress()">Reiniciar</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- FASE 1 -->
+            <section class="phase-card" id="phase-1">
+                <div class="phase-header" onclick="togglePhase('phase-1')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 1</span>
+                        <h2 class="phase-title">Ambiente e Dependências</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-1">0/4</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-1-1" data-phase="phase-1">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Analisar os arquivos e classes atuais do projeto no seu IDE (compreender a estrutura geral).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-1-2" data-phase="phase-1">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Verificar o arquivo <span class="task-code">pom.xml</span> e garantir que a dependência do banco de dados <span class="task-code">H2</span> esteja incluída (se não estiver, adicione o starter em memória).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-1-3" data-phase="phase-1">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Configurar as propriedades do banco H2 no <span class="task-code">application.properties</span> para habilitar o console e a URL de teste (ex: <span class="task-code">spring.h2.console.enabled=true</span>).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-1-4" data-phase="phase-1">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Rodar o projeto no terminal (<span class="task-code">mvnw spring-boot:run</span>) e verificar se inicializa corretamente na porta 8080.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 2 -->
+            <section class="phase-card" id="phase-2">
+                <div class="phase-header" onclick="togglePhase('phase-2')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 2</span>
+                        <h2 class="phase-title">Ajustes de Modelo (Lombok & JPA)</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-2">0/8</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-1" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Abrir a classe <span class="task-code">LivrosModel.java</span> e entender o relacionamento `@ManyToOne` com o UserModel.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-2" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Adicionar a anotação <span class="task-code">@EqualsAndHashCode(onlyExplicitlyIncluded = true)</span> na classe <span class="task-code">LivrosModel</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-3" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Marcar o atributo <span class="task-code">id</span> em <span class="task-code">LivrosModel</span> com a anotação <span class="task-code">@EqualsAndHashCode.Include</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-4" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Verificar os construtores de <span class="task-code">LivrosModel</span>, garantindo o construtor vazio (`@NoArgsConstructor`) para o hibernate funcionar.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-5" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Abrir a classe <span class="task-code">UserModel.java</span> e entender a relação bidirecional `@OneToMany` com os livros.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-6" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Adicionar a anotação <span class="task-code">@EqualsAndHashCode(onlyExplicitlyIncluded = true)</span> na classe <span class="task-code">UserModel</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-7" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Marcar o atributo <span class="task-code">id</span> em <span class="task-code">UserModel</span> com a anotação <span class="task-code">@EqualsAndHashCode.Include</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-2-8" data-phase="phase-2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Verificar se a lista <span class="task-code">livros</span> está inicializada corretamente como um `new ArrayList<>()` em <span class="task-code">UserModel</span>.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 3 -->
+            <section class="phase-card" id="phase-3">
+                <div class="phase-header" onclick="togglePhase('phase-3')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 3</span>
+                        <h2 class="phase-title">Repositórios (Spring Data JPA)</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-3">0/4</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-3-1" data-phase="phase-3">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Abrir a interface <span class="task-code">LivrosRepository.java</span> e certificar que ela estende <span class="task-code">JpaRepository&lt;LivrosModel, Long&gt;</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-3-2" data-phase="phase-3">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Abrir a interface <span class="task-code">UserRepository.java</span> e certificar que ela estende <span class="task-code">JpaRepository&lt;UserModel, Long&gt;</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-3-3" data-phase="phase-3">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Estudar os métodos herdados do `JpaRepository` (ex: `save`, `findById`, `findAll`, `deleteById`).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-3-4" data-phase="phase-3">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Garantir que ambos os arquivos possuem a anotação <span class="task-code">@Repository</span> para gerenciamento de escopo no Spring.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 4 -->
+            <section class="phase-card" id="phase-4">
+                <div class="phase-header" onclick="togglePhase('phase-4')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 4</span>
+                        <h2 class="phase-title">Logica de Empréstimo (Service)</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-4">0/9</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-1" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar a assinatura do método no <span class="task-code">BibliotecaService.java</span>: <span class="task-code">public void realizarEmprestimo(Long idUsuario, Long idLivro)</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-2" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Injetar via construtor as dependências do <span class="task-code">LivrosRepository</span> e <span class="task-code">UserRepository</span> dentro de `BibliotecaService`.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-3" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Adicionar a anotação <span class="task-code">@Transactional</span> sobre o método para garantir a atomicidade da transação.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-4" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Buscar o usuário pelo ID e lançar uma exceção de "recurso não encontrado" caso ele não exista.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-5" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Buscar o livro pelo ID e lançar uma exceção de "recurso não encontrado" caso ele não exista no acervo.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-6" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Validar a disponibilidade do livro: verificar se <span class="task-code">livro.getUser() != null</span> (se for diferente de nulo, significa que está indisponível).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-7" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Validar o limite do usuário: verificar se o tamanho da lista <span class="task-code">usuario.getLivros().size() &gt;= 3</span> e barrar se passar do limite.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-8" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Executar a ação: fazer a associação bidirecional, definindo o usuário no livro (<span class="task-code">livro.setUser(usuario)</span>).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-4-9" data-phase="phase-4">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Salvar a alteração no banco de dados usando o método do repositório <span class="task-code">livrosRepository.save(livro)</span>.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 5 -->
+            <section class="phase-card" id="phase-5">
+                <div class="phase-header" onclick="togglePhase('phase-5')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 5</span>
+                        <h2 class="phase-title">Logica de Devolução (Service)</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-5">0/6</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-5-1" data-phase="phase-5">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar a assinatura do método no <span class="task-code">BibliotecaService.java</span>: <span class="task-code">public void realizarDevolucao(Long idUsuario, Long idLivro)</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-5-2" data-phase="phase-5">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Adicionar a anotação <span class="task-code">@Transactional</span> sobre o método para processamento transacional.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-5-3" data-phase="phase-5">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Buscar o usuário e o livro no banco de dados, validando suas existências.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-5-4" data-phase="phase-5">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Validar se o livro de fato pertence a esse usuário específico (verificar se <span class="task-code">livro.getUser().getId().equals(idUsuario)</span>).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-5-5" data-phase="phase-5">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Executar a devolução: quebrar o vínculo setando o usuário como nulo no livro (<span class="task-code">livro.setUser(null)</span>).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-5-6" data-phase="phase-5">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Persistir as alterações usando <span class="task-code">livrosRepository.save(livro)</span>.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 6 -->
+            <section class="phase-card" id="phase-6">
+                <div class="phase-header" onclick="togglePhase('phase-6')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 6</span>
+                        <h2 class="phase-title">Controlador de Livros (Endpoints)</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-6">0/4</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-6-1" data-phase="phase-6">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Injetar a dependência do <span class="task-code">LivrosRepository</span> na classe <span class="task-code">LivrosController</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-6-2" data-phase="phase-6">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar a rota de inserção: <span class="task-code">POST /livros</span>, recebendo a entidade via `@RequestBody` e retornando status HTTP 201.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-6-3" data-phase="phase-6">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar a rota de listagem: <span class="task-code">GET /livros</span>, chamando <span class="task-code">livrosRepository.findAll()</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-6-4" data-phase="phase-6">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Testar localmente a inserção de livros usando arquivos json no Postman ou curl.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 7 -->
+            <section class="phase-card" id="phase-7">
+                <div class="phase-header" onclick="togglePhase('phase-7')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 7</span>
+                        <h2 class="phase-title">Controladores REST Biblioteca e Usuário</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-7">0/5</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-7-1" data-phase="phase-7">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Implementar endpoints de cadastro e busca de usuário em <span class="task-code">UserController.java</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-7-2" data-phase="phase-7">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Injetar <span class="task-code">BibliotecaService</span> no controlador <span class="task-code">BibliotecaController</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-7-3" data-phase="phase-7">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar o endpoint de empréstimo: <span class="task-code">POST /biblioteca/emprestimo/{idUsuario}/{idLivro}</span> vinculando as variáveis de rota (`@PathVariable`).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-7-4" data-phase="phase-7">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar o endpoint de devolução: <span class="task-code">POST /biblioteca/devolucao/{idUsuario}/{idLivro}</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-7-5" data-phase="phase-7">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Retornar status de resposta HTTP 200 (OK) em caso de execução bem-sucedida de negócio.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 8 -->
+            <section class="phase-card" id="phase-8">
+                <div class="phase-header" onclick="togglePhase('phase-8')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 8</span>
+                        <h2 class="phase-title">Tratamento Global de Exceções</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-8">0/6</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-8-1" data-phase="phase-8">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar a classe de exceção customizada de negócio (ex: <span class="task-code">RegraDeNegocioException</span>) que estende de <span class="task-code">RuntimeException</span>.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-8-2" data-phase="phase-8">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar uma exceção de recurso inexistente (ex: <span class="task-code">RecursoNaoEncontradoException</span>).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-8-3" data-phase="phase-8">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Atualizar a camada de serviço (`BibliotecaService`) para lançar estas novas exceções em vez de genéricas.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-8-4" data-phase="phase-8">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Criar uma representação padronizada do corpo de erro (ex: classe contendo timestamp, código de status HTTP e a mensagem descritiva).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-8-5" data-phase="phase-8">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Adicionar o método `@ExceptionHandler(RegraDeNegocioException.class)` no <span class="task-code">GlobalExceptionHandler</span> para retornar HTTP 400 Bad Request.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-8-6" data-phase="phase-8">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Adicionar o método `@ExceptionHandler(RecursoNaoEncontradoException.class)` para retornar status HTTP 404 Not Found.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FASE 9 -->
+            <section class="phase-card" id="phase-9">
+                <div class="phase-header" onclick="togglePhase('phase-9')">
+                    <div class="phase-title-area">
+                        <span class="phase-badge">Fase 9</span>
+                        <h2 class="phase-title">Testes e Validação de Fluxo</h2>
+                    </div>
+                    <div class="phase-status">
+                        <span class="phase-count" id="count-phase-9">0/7</span>
+                        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="phase-content">
+                    <ul class="task-list">
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-9-1" data-phase="phase-9">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Subir a aplicação e cadastrar o livro "Código Limpo" com ID gerado automaticamente.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-9-2" data-phase="phase-9">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Cadastrar um segundo livro chamado "Arquitetura Limpa".</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-9-3" data-phase="phase-9">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Cadastrar um novo usuário de teste.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-9-4" data-phase="phase-9">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Realizar com sucesso o empréstimo do livro "Código Limpo" para o usuário.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-9-5" data-phase="phase-9">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Tentar re-emprestar o mesmo livro e conferir se foi bloqueado adequadamente (retornando o corpo do erro 400).</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-9-6" data-phase="phase-9">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Cadastrar e emprestar mais livros para o mesmo usuário e validar se o limite de 3 livros funciona bloqueando no 4º.</span>
+                        </li>
+                        <li class="task-item" onclick="toggleTask(this)">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="t-9-7" data-phase="phase-9">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="task-desc">Testar a devolução e consultar o usuário para ver se o livro desapareceu de sua lista e voltou a estar disponível no acervo.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- CELEBRATION MODAL -->
+    <div id="celebration-screen">
+        <div class="congrats-card">
+            <div class="congrats-icon">🏆</div>
+            <div class="congrats-title">Desafio Concluído!</div>
+            <div class="congrats-text">Parabéns! Você completou 100% de todas as fases, implementou e refinou toda a estrutura da API do Sistema de Biblioteca Executiva!</div>
+            <button class="congrats-btn" onclick="hideCelebration()">Fechar e Comemorar</button>
+        </div>
+    </div>
+
+    <script>
+        // Load initial state
+        document.addEventListener("DOMContentLoaded", () => {
+            loadProgress();
+            updateProgressPercentage();
+        });
+
+        // Toggle Expand/Collapse of Phases
+        function togglePhase(phaseId) {
+            const card = document.getElementById(phaseId);
+            card.classList.toggle("collapsed");
+        }
+
+        // Toggle Task
+        function toggleTask(listItem) {
+            const checkbox = listItem.querySelector('input[type="checkbox"]');
+            // Prevent double triggers since click bubbles from label
+            if (event.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+            
+            if (checkbox.checked) {
+                listItem.classList.add("completed");
+            } else {
+                listItem.classList.remove("completed");
+            }
+
+            // Save state
+            localStorage.setItem(checkbox.id, checkbox.checked ? "checked" : "unchecked");
+            
+            updateProgressPercentage();
+            checkPhaseComplete(checkbox.dataset.phase);
+        }
+
+        // Load progress from LocalStorage
+        function loadProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(chk => {
+                const state = localStorage.getItem(chk.id);
+                if (state === "checked") {
+                    chk.checked = true;
+                    chk.closest('.task-item').classList.add("completed");
+                } else {
+                    chk.checked = false;
+                    chk.closest('.task-item').classList.remove("completed");
+                }
+            });
+            updatePhaseCounts();
+        }
+
+        // Update counts per phase
+        function updatePhaseCounts() {
+            const phases = ['phase-1', 'phase-2', 'phase-3', 'phase-4', 'phase-5', 'phase-6', 'phase-7', 'phase-8', 'phase-9'];
+            phases.forEach(phase => {
+                const chks = document.querySelectorAll(`input[data-phase="${phase}"]`);
+                const checkedChks = document.querySelectorAll(`input[data-phase="${phase}"]:checked`);
+                const label = document.getElementById(`count-${phase}`);
+                if (label) {
+                    label.innerText = `${checkedChks.length}/${chks.length}`;
+                }
+            });
+        }
+
+        // Calculate and update progress percentage
+        function updateProgressPercentage() {
+            const total = document.querySelectorAll('input[type="checkbox"]').length;
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+            const percentageLabel = document.getElementById("progress-percentage");
+            const progressBar = document.getElementById("overall-progress-bar");
+            
+            percentageLabel.innerText = `${percent}%`;
+            progressBar.style.width = `${percent}%`;
+
+            updatePhaseCounts();
+
+            if (percent === 100) {
+                showCelebration();
+            }
+        }
+
+        // Check if full phase is complete and trigger mini celebration
+        function checkPhaseComplete(phaseId) {
+            const chks = document.querySelectorAll(`input[data-phase="${phaseId}"]`);
+            const checkedChks = document.querySelectorAll(`input[data-phase="${phaseId}"]:checked`);
+            
+            if (chks.length === checkedChks.length && chks.length > 0) {
+                // Flash green
+                const header = document.querySelector(`#${phaseId} .phase-header`);
+                header.style.boxShadow = "inset 0 0 20px rgba(0, 255, 137, 0.2)";
+                setTimeout(() => {
+                    header.style.boxShadow = "none";
+                }, 1000);
+                triggerConfetti(50);
+            }
+        }
+
+        // Reset progress
+        function resetAllProgress() {
+            if (confirm("Deseja realmente limpar seu progresso e recomeçar o desafio?")) {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(chk => {
+                    chk.checked = false;
+                    chk.closest('.task-item').classList.remove("completed");
+                    localStorage.removeItem(chk.id);
+                });
+                updateProgressPercentage();
+            }
+        }
+
+        // Show/Hide Celebration screen
+        function showCelebration() {
+            document.getElementById("celebration-screen").style.display = "flex";
+            triggerConfetti(250);
+        }
+
+        function hideCelebration() {
+            document.getElementById("celebration-screen").style.display = "none";
+        }
+
+        // CONFETTI SYSTEM
+        const canvas = document.getElementById("confetti-canvas");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+        let animationFrameId = null;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        class ConfettiParticle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 8 + 5;
+                this.color = ["#00f2fe", "#9b51e0", "#00ff87", "#ff5252", "#ffeb3b"][Math.floor(Math.random() * 5)];
+                this.speedY = Math.random() * 3 + 4;
+                this.speedX = Math.random() * 2 - 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 4 - 2;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                if (this.y > canvas.height) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        function triggerConfetti(count) {
+            cancelAnimationFrame(animationFrameId);
+            particles = [];
+            for (let i = 0; i < count; i++) {
+                particles.push(new ConfettiParticle());
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+                if (p.y < canvas.height - 20) active = true;
+            });
+            if (active) {
+                animationFrameId = requestAnimationFrame(animateConfetti);
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import com.julianocli.springstudy.User.UserModel;
 import jakarta.persistence.*;
 import lombok.*;
 
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +15,7 @@ public class LivrosModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Include
     private long id;
     private String titulo;
 
