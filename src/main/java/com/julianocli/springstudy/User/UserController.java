@@ -1,10 +1,10 @@
-package com.julianocli.springstudy;
+package com.julianocli.springstudy.User;
 
 import org.springframework.web.bind.annotation.*;
 
 @RestController //Recebe requisições HTTP e devolve a resposta direto para o cliente.
 @RequestMapping // Define a URL e o métode HTTP para chegar aqui.
-public class NinjaController {
+public class UserController {
     // Controladores são intermediários entre a View e o Model.
 
     @GetMapping("/boasvindas")
