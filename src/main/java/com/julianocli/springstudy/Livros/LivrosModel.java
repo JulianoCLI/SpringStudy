@@ -3,6 +3,7 @@ package com.julianocli.springstudy.Livros;
 import com.julianocli.springstudy.User.UserModel;
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Getter
 @Setter
@@ -21,6 +22,7 @@ public class LivrosModel {
 
     @ManyToOne // Muitos livros podem ter apenas uma pessoa
     @JoinColumn(name = "user_id") // Chave Estrangeira
+@JsonBackReference
     private UserModel user;
 
 

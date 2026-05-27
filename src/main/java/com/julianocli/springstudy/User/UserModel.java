@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Getter
 @Setter
@@ -25,6 +26,7 @@ public class UserModel {
     private String email;
 
     @OneToMany (mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})// Uma pessoa pode ter vários livros
+    @JsonManagedReference
     private List<LivrosModel> livros = new ArrayList<>();
 
     public UserModel(String name, String email) {
