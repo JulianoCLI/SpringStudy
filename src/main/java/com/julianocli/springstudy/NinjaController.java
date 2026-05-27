@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController //Recebe requisições HTTP e devolve a resposta direto para o cliente.
 @RequestMapping // Define a URL e o métode HTTP para chegar aqui.
-public class Controller {
+public class NinjaController {
     // Controladores são intermediários entre a View e o Model.
 
     @GetMapping("/boasvindas")
